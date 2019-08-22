@@ -1,25 +1,47 @@
 <template>
-  <div class="WelcomePage">
+  <div v-if="userCheck">
+    <Navigation :user="user" />
     <h1>Welcome to Win-When</h1>
     <h3>Hi there</h3>
     <ul>
       <li>
-        <AppButton buttonText="Learn More"/>
+        <AppButton buttonText="Learn More" link="/about" />
       </li>
       <li>
-        <AppButton buttonText="Get Started" link="./signup"/>
+        <AppButton v-if="user" buttonText="View Events" link="/events" />
+        <AppButton v-else buttonText="Sign Up" link="/signup" />
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import AppButton from '../components/AppButton.vue'
+import Navigation from '../components/Navigation.vue'
 
 export default {
   name: 'WelcomePage',
+  data() {
+    return {
+      user: null,
+      userCheck: false
+    }
+  },
+  beforeCreate: function() {
+    axios.get('/auth/user')
+      .then(res => {
+        if (!res.data.user) {
+            this.user = null
+        } else {
+            this.user = res.data.user
+        }
+        this.userCheck = true
+      })
+  },
   components: {
-    AppButton
+    AppButton,
+    Navigation
   }
 }
 </script>

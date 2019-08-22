@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Navigation :atLogin="true" />
         <h3>Login Page</h3>
         <form>
             <div>
@@ -15,36 +16,24 @@
                     Login
                 </button>
             </div>
-            <div>
-                <button @click="logOut">
-                    Log Out
-                </button>
+            <div v-if="badLogin" class="error-message">
+                Invalid login. Please check your email and password and try again.
             </div>
         </form>
-        <h3>{{ currentUser }}</h3>
     </div>
 </template>
 
 <script>
     import axios from 'axios'
-
+    import Navigation from '../components/Navigation'
     export default {
         data(){
             return {
-                currentUser: "",
-                email: "",
-                password: ""
+                currentUser: '',
+                email: '',
+                password: '',
+                badLogin: false
             }
-        },
-        beforeMount: function() {
-            axios.get('/auth/user')
-                .then(res => {
-                    if (!res.data.user) {
-                        this.currentUser = 'The current user is: Nobody'
-                    } else {
-                        this.currentUser = 'The current user is: ' + res.data.user.name.firstName + ' ' + res.data.user.name.lastName
-                    }
-                })
         },
         methods: {
             handleSubmit(e) {
@@ -53,10 +42,14 @@
                     username: this.email,
                     password: this.password
                 })
-                .then(response => {
-                    this.currentUser = 'The current user is: ' + response.data.name.firstName + ' ' + response.data.name.lastName
+                .then(() => {
+                    this.$router.push('events')
+                }
+                )
+                .catch(err => {
+                    this.badLogin = true
+                    return err
                 })
-                .catch(err => err)
             },
             updateUser(data) {
                 this.currentUser = data
@@ -70,6 +63,9 @@
                 .catch(err => err)
             }
         },
-        name: 'LoginPage'
+        name: 'LoginPage',
+        components: {
+            Navigation
+        }
     }
 </script>

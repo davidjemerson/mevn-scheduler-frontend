@@ -23,6 +23,6 @@ a {
 }
 .app-button:hover {
     background-color: lightblue;
-    cursor: pointer
+    cursor: pointer;
 }
 </style>

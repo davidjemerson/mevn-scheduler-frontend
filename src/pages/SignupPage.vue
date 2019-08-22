@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Navigation />
         <h3>Signup Page</h3>
         <form>
             <div>
@@ -36,6 +37,7 @@
 
 <script>
     import axios from 'axios'
+    import Navigation from '../components/Navigation'
     export default {
         data() {
             return {
@@ -47,13 +49,11 @@
                 password: ""
             }
         },
-        beforeMount: function() {
+        beforeCreate: function() {
             axios.get('/auth/user')
                 .then(res => {
-                    if (!res.data.user) {
-                        this.currentUser = 'The current user is: Nobody'
-                    } else {
-                        this.currentUser = 'The current user is: ' + res.data.user.name.firstName + ' ' + res.data.user.name.lastName
+                    if (res.data.user) {
+                        this.$router.push('/events')
                     }
                 })
         },
@@ -69,8 +69,11 @@
                     username: this.username,
                     email: this.email,
                     password: this.password
-                }).then(res => console.log(res.data))
+                }).then(res => this.$router.push(res.data))
             }
+        },
+        components: {
+            Navigation
         },
         name: 'SignupPage'
     }
